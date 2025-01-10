@@ -4,28 +4,18 @@ namespace Src\Controller;
 
 require_once '../Service/ServiceReparation.php';
 require_once '../View/ViewReparation.php';
+
 use Src\Service\ServiceReparation;
 use Src\View\ViewReparation;
 
-session_start();
 
-if(!isset($_SESSION["role"])) {
-    //session_start();
-    //redireccionar a index.php
-    header("Location: " . __DIR__ . "/../index.php");
-    exit();
+if(session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
 $contr = new ControllerReparation();
-
 if(isset($_POST["getReparation"])) {
-    try {
-        $contr->getReparation();
-    } catch(\Exception $e) {
-        echo '<p class="mx-3">' . $e->getMessage() . '</p>';
-    }
-    
-    //poner $_POST a null?
+    $contr->getReparation();
 }
 
 if(isset($_POST["insertReparation"])) {
@@ -34,19 +24,38 @@ if(isset($_POST["insertReparation"])) {
 
 class ControllerReparation {
     function getReparation() {
-        $role = $_SESSION["role"];
-        $idReparation = $_POST["uuid"];
+        try {
+            $role = $_SESSION["role"];
+            $idReparation = $_POST["uuid"];
 
-        $serviceReparation = new ServiceReparation();
-        $reparation = $serviceReparation->getReparation($role, $idReparation);
+            $serviceReparation = new ServiceReparation();
+            $reparation = $serviceReparation->getReparation($role, $idReparation);
 
-        $view = new ViewReparation();
-        $view->render($reparation);
+            $view = new ViewReparation();
+            $view->render($reparation);
+        }catch(\Exception $e) {
+            $viewError = new ViewReparation();
+            $viewError->getReparationMessageError();
+        }
     }
 
 
     function insertReparation() {
-        echo "prueba";
+        try {
+            $workshopID = $_POST["workshopID"];
+            $workshopName = $_POST["workshopName"];
+            $registerDate = $_POST["registerDate"];
+            $licensePlate = $_POST["licensePlate"];
+
+            $serviceReparation = new ServiceReparation();
+            $uuid = $serviceReparation->insertReparation($workshopID, $workshopName, $registerDate,$licensePlate);
+
+            $viewError = new ViewReparation();
+            $viewError->insertReparationResult($uuid);
+        } catch (\Exception $e) {
+            $viewError = new ViewReparation();
+            //$viewError->getReparationMessageError();
+        }
     }
 }
 
