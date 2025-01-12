@@ -54,7 +54,7 @@ class ControllerReparation {
             $viewError->insertReparationResult($uuid);
         } catch (\Exception $e) {
             $viewError = new ViewReparation();
-            //$viewError->getReparationMessageError();
+            $viewError->insertReparationErrorMessage();
         }
     }
 }

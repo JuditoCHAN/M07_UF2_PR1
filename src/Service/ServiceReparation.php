@@ -28,15 +28,16 @@ class ServiceReparation {
         //lee la configuracion de la db desde un archivo ini
         $db = parse_ini_file(__DIR__ . "/../../conf/db_config.ini");
 
-        //creamos conexion con la base de datos
-        $mysqli = new \mysqli($db["host"], $db["user"], $db["pwd"], $db["db_name"]);
-
-        if($mysqli->connect_errno) {
+        try {
+            //creamos conexion con la base de datos
+            $mysqli = new \mysqli($db["host"], $db["user"], $db["pwd"], $db["db_name"]);
+        } catch(\Exception $e) {
             $this->log->error("Error connecting to the database");
-            throw new \Exception("Error connecting to the database: " . $mysqli->connect_error);
+            throw new \Exception("Error connecting to the database: " . $mysqli->connect_error); //para tratar excepcion en controller y q se muestre en view el error
         }
 
         $this->log->info("Connected to the database successfully");
+        
         return $mysqli;
     }
 
@@ -102,6 +103,7 @@ class ServiceReparation {
 
         } catch (\Exception $e) {
             $this->log->error("Error inserting reparation");
+            throw new \Exception("Error inserting reparation");
 
         } finally {
             if(isset($stmt)) {
