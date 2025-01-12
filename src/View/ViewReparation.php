@@ -39,6 +39,14 @@ class ViewReparation {
             </script>
         ';
     }
+
+    public function insertReparationErrorMessage() {
+        echo '
+            <script defer>
+                document.getElementById("insertResult").innerHTML = `<p class="alert alert-danger">Error inserting reparation!</p>`;
+            </script>
+        ';
+    }
 }
 
 ?>
@@ -93,7 +101,7 @@ class ViewReparation {
                     <input type="date" name="registerDate" id="registerDate" class="form-control" required>
 
                     <label for="licensePlate" class="form-label">License plate: </label>
-                    <input type="text" name="licensePlate" pattern="^\d{4}[- ]?[A-Za-z]{3}$" title="La matrícula debe tener formato 1234-ABC o 1234 ABC" id="licensePlate" class="form-control" maxlength="8" required>
+                    <input type="text" name="licensePlate" pattern="\d{4}-[A-Za-z]{3}" title="La matrícula debe tener formato 1234-ABC" id="licensePlate" class="form-control" maxlength="8" required>
 
                     <button type="submit" name="insertReparation" class="btn btn-primary my-3">Register</button>
                 </form>
