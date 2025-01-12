@@ -92,3 +92,7 @@
 [2025-01-12T23:43:00.823824+01:00] app_workshop_log.INFO: Connected to the database successfully [] []
 [2025-01-12T23:43:00.825715+01:00] app_workshop_log.INFO: Reparation info obtained successfully! [] []
 [2025-01-12T23:48:29.745484+01:00] app_workshop_log.ERROR: Error connecting to the database [] []
+[2025-01-13T00:05:15.990594+01:00] app_workshop_log.INFO: Connected to the database successfully [] []
+[2025-01-13T00:05:15.998778+01:00] app_workshop_log.INFO: Reparation inserted successfully! [] []
+[2025-01-13T00:05:21.032967+01:00] app_workshop_log.INFO: Connected to the database successfully [] []
+[2025-01-13T00:05:21.037285+01:00] app_workshop_log.INFO: Reparation info obtained successfully! [] []
