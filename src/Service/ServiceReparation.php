@@ -4,6 +4,8 @@ namespace Src\Service;
 require_once '../Model/Reparation.php';
 require_once '../../vendor/autoload.php'; //carga automáticamente las clases de las bibliotecas instaladas con Composer
 
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
 use Src\Model\Reparation;
 use Ramsey\Uuid\Uuid;
 
@@ -14,18 +16,27 @@ if(session_status() === PHP_SESSION_NONE) {
 
 class ServiceReparation {
 
+    private $log;
+
+    public function __construct() {
+        $this->log = new Logger('app_workshop_log');
+        $this->log->pushHandler(new StreamHandler('../../logs/app_workshop.log', Logger::INFO));
+    }
+
+
     public function connect(): \mysqli {
-        //lee la configuracion de la db de un archivo ini
+        //lee la configuracion de la db desde un archivo ini
         $db = parse_ini_file(__DIR__ . "/../../conf/db_config.ini");
 
         //creamos conexion con la base de datos
         $mysqli = new \mysqli($db["host"], $db["user"], $db["pwd"], $db["db_name"]);
 
         if($mysqli->connect_errno) {
-            //die();
-            throw new \Exception("Error connecting to database: " . $mysqli->connect_error);
+            $this->log->error("Error connecting to the database");
+            throw new \Exception("Error connecting to the database: " . $mysqli->connect_error);
         }
 
+        $this->log->info("Connected to the database successfully");
         return $mysqli;
     }
 
@@ -50,13 +61,16 @@ class ServiceReparation {
                     //enmascarar imagen
                     if($role == "client") {}
 
+                    $this->log->info("Reparation info obtained successfully!");
                     return $reparation;
 
                 } else {
+                    $this->log->error("Error: no reparation found with ID " . $idReparation);
                     throw new \Exception("No reparation found with ID " . $idReparation);
                 }
 
             } else {
+                $this->log->error("Error: unable to get reparation info");
                 throw new \Exception("Error preparing the GET SQL statement");
             }
 
@@ -83,11 +97,11 @@ class ServiceReparation {
             $stmt->bind_param("sisss", $reparationID, $workshopID, $workshopName, $registerDate, $licensePlate);
             $stmt->execute();
 
+            $this->log->info("Reparation inserted successfully!");
             return $reparationID;
-            //return "Reparation added successfully!";
 
         } catch (\Exception $e) {
-            //return "Error adding reparation";
+            $this->log->error("Error inserting reparation");
 
         } finally {
             if(isset($stmt)) {
